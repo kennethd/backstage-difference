@@ -25,12 +25,28 @@ def configured_app(connstr, debug=False):
             # allow requests with n in query string
             n = int(request.args.get('number'))
         solution = difflib.difference(n)
-        (current_datetime, occurrences) = db.log_request(app, n)
+        (created, occurrences) = db.log_request(app, n)
         return jsonify({
-            "datetime": str(current_datetime),
+            "datetime": str(created),
             "value": str(solution),
             "number": str(n),
             "occurrences": str(occurrences)
+        })
+
+    @app.route('/difference/history') # for ?number=n support
+    @app.route('/difference/history/<int:n>')
+    def difference_history(n=None):
+        if not n:
+            # allow requests with n in query string
+            n = int(request.args.get('number'))
+        solution = difflib.difference(n)
+        return jsonify({
+            "items": [ {
+                "datetime": str(row[0]),
+                "value": str(solution),
+                "number": str(n),
+                "occurrences": str(row[1])
+            } for row in db.history(app, n) ]
         })
 
     @app.route('/')

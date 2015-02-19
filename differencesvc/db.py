@@ -40,21 +40,35 @@ def dbh(conn_str, schema='', db_name=''):
 dbh.conns = {}
 
 
+def epoch_to_iso(epoch):
+    """convert internal epoch to datetime string"""
+    return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(epoch))
+
+
+def history(app, n):
+    """returns list of all logged requests for n"""
+    with dbh(app.connstr) as db:
+        sql = """SELECT created, occurrences FROM difference_requests
+            WHERE n = ? ORDER BY occurrences ASC"""
+        cur = db.cursor()
+        cur.execute(sql, (n, ))
+        return [ (epoch_to_iso(row[0]), row[1])for row in cur.fetchall() ]
+
+
 def log_request(app, n):
     """writes row to db, returns 2-tuple (datetime, qty_ns_seen)"""
     created = int(time.time())
 
     with dbh(app.connstr) as db:
         cur = db.cursor()
-        sql = "INSERT INTO difference_requests (n, created) VALUES (?, ?)"
-        cur.execute(sql, (n, created))
 
-    with dbh(app.connstr) as db:
         sql = "SELECT COUNT(1) FROM difference_requests where n = ?"
         cur.execute(sql, (n, ))
         row = cur.fetchone()
-        occurrences = row[0]
+        occurrences = row[0] + 1
 
-    return (created, occurrences)
+        sql = "INSERT INTO difference_requests (n, created, occurrences) VALUES (?, ?, ?)"
+        cur.execute(sql, (n, created, occurrences))
 
+    return (epoch_to_iso(created), occurrences)
 
