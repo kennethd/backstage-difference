@@ -1,3 +1,4 @@
+
 def sum_squares(n):
     """returns sum(1^2, ..., n^2)"""
     try:
@@ -14,6 +15,7 @@ def square_sums(n):
         raise ValueError("{} must be integer <= 100".format(n))
     return sum([ i for i in xrange(1, n + 1) ]) ** 2
 
+# this could be decorated with a @memoize cache, but it is so trivial anyway
 def difference(n):
     """returns difference between sum_squares(n) and square_sums(n)"""
     return abs(square_sums(n) - sum_squares(n))

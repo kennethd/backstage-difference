@@ -49,6 +49,10 @@ installed, simply type (while in the project's root directory):
 system!** If you don't want to risk your system being updated, just make sure
 you have the requirements listed below & only issue `make install`
 
+`make install` also re-initializes your database (after creating a backup for
+you), if you want to re-install the package & maintain your db without having
+to copy the backup back into place, use `make upgrade` instead.
+
 To run the app on the default port, do
 
 ```

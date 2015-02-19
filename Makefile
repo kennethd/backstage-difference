@@ -28,12 +28,23 @@ test:
 
 # runtime targets
 
-run:
+debug:
 	. ./bin/activate && ./$(APP_DIR)/app.py --port=$(APP_PORT) --debug
+
+run:
+	. ./bin/activate && ./$(APP_DIR)/app.py --port=$(APP_PORT)
+
+# db management
+
+init-schema:
+	mkdir -p ./backup
+	test -f ./differencesvc.db && echo ".backup ./backup/differencesvc.$(ISODATE).bak" | sqlite3 ./differencesvc.db || true
+	test -f ./differencesvc.db && rm ./differencesvc.db || true
+	sqlite3 ./differencesvc.db < ./sql/differencesvc-schema.sql
 
 # installation targets
 
-install: virtualenv
+install: virtualenv init-schema
 	git pull origin $(GIT_BRANCH) && . ./bin/activate && ./setup.py $(SETUP_PY_TARGET)
 
 package-deps:
@@ -43,7 +54,10 @@ requirements:
 	. ./bin/activate && pip freeze > requirements.txt
 
 uninstall:
-	. ./bin/activate && yes | pip uninstall $(PACKAGE_NAME)
+	. ./bin/activate && yes | pip uninstall $(PACKAGE_NAME) || true
+
+upgrade: uninstall
+	git pull origin $(GIT_BRANCH) && . ./bin/activate && ./setup.py $(SETUP_PY_TARGET)
 
 virtualenv:
 	virtualenv --python=/usr/bin/python2.7 --no-site-packages --setuptools --prompt="[$(VIRTUALENV_NAME)]" . && \

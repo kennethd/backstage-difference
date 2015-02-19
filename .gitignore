@@ -2,6 +2,7 @@
 *.py[co]
 *.sw[po]
 .coverage
+/backup
 /bin/activate
 /bin/activate.csh
 /bin/activate.fish
@@ -31,6 +32,9 @@
 /bin/symilar
 /bin/symilar.bat
 /build
+/differencesvc.db
+/differencesvc.db-shm
+/differencesvc.db-wal
 /differencesvc.egg-info
 /dist
 /include
