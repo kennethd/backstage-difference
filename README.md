@@ -40,16 +40,23 @@ Debian-based system for package dependencies.
 
 To ensure all system dependencies and virtualenv Python dependencies are
 installed, simply type (while in the project's root directory):
+
 ```
-    make install
+    make package-deps install
 ```
 
+**WARNING `make package-deps` calls `sudo apt-get upgrade` and may alter your
+system!** If you don't want to risk your system being updated, just make sure
+you have the requirements listed below & only issue `make install`
+
 To run the app on the default port, do
+
 ```
     make run
 ```
 
 If your port 8000 is occupied, you can specify a non-default port:
+
 ```
     make APP_PORT=8080 run
 ```

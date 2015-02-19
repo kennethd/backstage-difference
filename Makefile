@@ -4,6 +4,7 @@ PACKAGE_NAME ?= differencesvc
 VIRTUALENV_NAME ?= differencesvc
 # `make APP_PORT=8080 run` to run on port other than default
 APP_PORT ?= 8000
+APP_DIR ?= exampleapp
 # `make SETUP_PY_TARGET=develop install` to install as "developer egg"
 SETUP_PY_TARGET ?= install
 GIT_BRANCH ?= master
@@ -20,7 +21,7 @@ config:
 # dev-helper targets
 
 edit:
-	vim README.md Makefile requirements.txt setup.py `find ./$(PACKAGE_NAME) ./sql ./exampleapp \( -path '*.egg-info' -o -path '*/build/*' -o -name 'jquery*' -o -name __init__.py -o -name '*.egg' -o -name '*.pyc' -o -name '*.swp' -o -name '*.swo' -o -iname '*.ico' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.pdf' -o -iname '*.doc' \) -prune  -o -type f  -print`
+	vim README.md Makefile requirements.txt setup.py `find ./$(PACKAGE_NAME) ./sql ./$(APP_DIR) \( -path '*.egg-info' -o -path '*/build/*' -o -name 'jquery*' -o -name __init__.py -o -name '*.egg' -o -name '*.pyc' -o -name '*.swp' -o -name '*.swo' -o -iname '*.ico' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.pdf' -o -iname '*.doc' \) -prune  -o -type f  -print`
 
 test:
 	nosetests  -sv --with-doctest --logging-level=INFO --cover-branches --with-coverage --cover-erase --cover-package=$(PACKAGE_NAME) $(PACKAGE_NAME)
@@ -28,12 +29,12 @@ test:
 # runtime targets
 
 run:
-	. ./bin/activate && ./$(PACKAGE_NAME)/app.py --port=$(APP_PORT) --debug
+	. ./bin/activate && ./$(APP_DIR)/app.py --port=$(APP_PORT) --debug
 
 # installation targets
 
-install: package-deps virtualenv
-	git pull origin $(GIT_BRANCH) && . ./bin/activate && cd ./$(PACKAGE_NAME) && ./setup.py $(SETUP_PY_TARGET)
+install: virtualenv
+	git pull origin $(GIT_BRANCH) && . ./bin/activate && ./setup.py $(SETUP_PY_TARGET)
 
 package-deps:
 	sudo aptitude update && sudo aptitude safe-upgrade && sudo aptitude install git make python2.7 python-dev python-pip python-virtualenv
