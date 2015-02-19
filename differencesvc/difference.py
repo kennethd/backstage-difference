@@ -1,5 +1,3 @@
-import math
-
 def sum_squares(n):
     """returns sum(1^2, ..., n^2)"""
     try:
