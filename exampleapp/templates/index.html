@@ -5,16 +5,78 @@
 {% block header %}<h1>differencesvc web interface</h1>{% endblock %}
 
 {% block content %}
+
+
 <p>
 Hello and welcome.  
 </p>
 <p>
-You can use this web interface to find the difference between the sum of
-the squares of all numbers from 1 to n, and the square of the sums of all
-numbers from 1 to n (where n is <= 100).
-</p>
-<p>
+You can use this web interface to see the history of requests people have made
+to find the difference between the sum of the squares of all numbers from 1 to
+n, and the square of the sums of all numbers from 1 to n (where n is <= 100).
 </p>
 
+<p>
+Select the number you'd like to see a history of requests for:
+<select name="number" id="gethistory">
+        <option value="0">select number</option>
+{% for n in range(1, 101) %}
+        <option value="{{ n }}">{{ n }}</option>
+{% endfor %}
+</select>
+</p>
+
+<div id="info_msg" style="display: none">
+</div>
+
+</div>
+<div id="historydiv" style="display: none">
+    <table id="historytable">
+      <thead>
+        <tr>
+          <th data-field="datetime">Datetime</th>
+          <th data-field="value">Value</th>
+          <th data-field="number">Number</th>
+          <th data-field="occurrences">Occurrences</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+</div>
+
+<script src="/static/jquery-1.11.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $("#gethistory").change(function () {
+        var n = $(this).val();
+        console.log(n);
+        $.ajax({
+            url: "/difference/history/" + n,
+            context: document.body
+        }).done(function(data) {
+            var rows = data.items; 
+            $("#historytable > tbody").empty();
+            $("#historydiv").css("display", "none");
+            $("#info_msg").css("display", "none");
+            if (rows.length == 0) {
+                $("#info_msg").html("no results!");
+                $("#info_msg").css("display", "inline");
+            }
+            else {
+                for (var i = 0; i < rows.length; i += 1) {
+                    $("#historytable > tbody").append(
+                        $("<tr>")
+                            .append($("<td>").html(JSON.stringify(rows[i]["datetime"])))
+                            .append($("<td>").html(JSON.stringify(rows[i]["value"])))
+                            .append($("<td>").html(JSON.stringify(rows[i]["number"])))
+                            .append($("<td>").html(JSON.stringify(rows[i]["occurrences"])))
+                        )
+                }
+                $("#historydiv").css("display", "inline");
+            }
+        });
+    });
+});
+</script>
 {% endblock %}
 
