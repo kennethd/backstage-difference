@@ -22,20 +22,12 @@ requirements, it seemed to me the benefits of no additional setup outweighs
 any particular db's featureset.  It also allowed me to re-use some code I had
 lying around from a personal project.
 
-## Architecture
-
-For anything less trivial, I would usually separate a pip-installable python
-library of the implementation from the web and service front-end; in this case
-I felt it was too much effort and abstraction for the purpose of the
-assignment.  Please imagine the `differencesvc.py` module and test suite might
-mature into a separate library implementation.
-
 ## Setup
 
 For rapid prototyping and deployment I generally re-use a few simple Makefile
 recipies, and I have done so here.  At the very least it provides a reference
 implementation of the preferred command for running unit tests, and managing
-extra-python package dependencies.  The included version assumes a
+extra-python package dependencies, etc...  The included version assumes a
 Debian-based system for package dependencies.
 
 To ensure all system dependencies and virtualenv Python dependencies are
@@ -65,6 +57,8 @@ If your port 8000 is occupied, you can specify a non-default port:
     make APP_PORT=8080 run
 ```
 
+Developers can run the app in debug mode via `make debug`.
+
 ## Requirements
 
 Debian packages
@@ -82,7 +76,6 @@ Python packages (installed into virtualenv by `make install` command, above)
   * nose
   * coverage
   * pylint
-
 
 ## Service request endpoints
 
@@ -104,6 +97,8 @@ Returns JSON:
 
 Again, `GET /difference/history?number=n` should also be supported.
 
+Returns JSON dict with single key named "items", which contains a list of the
+above structures.
 
 ## Web frontend endpoints
 
